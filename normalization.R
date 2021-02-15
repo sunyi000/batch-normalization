@@ -40,10 +40,10 @@ sva_features <- t(features_m)
 batch = as.factor(batch$plate)
 
 #bind plate back to features matrix
-with_plate <- cbind(as.data.frame(features_m),batch)
+with_plate <- cbind(as.data.frame(sva_features),batch)
 
 #assign plate as name
-#rownames(with_plate)[nrow(with_plate)] <- "batch"
+rownames(with_plate)[nrow(with_plate)] <- "batch"
 
 mod = model.matrix(~1,data=with_plate)
 
