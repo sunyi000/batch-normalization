@@ -39,6 +39,9 @@ features <- removeZeroVar(features)
 # remove columns with more than 5% NAs
 features <- features[, which(colMeans(!is.na(features))>0.05)]
 
+## impute values for NAs
+
+
 # Standardise features
 features <-as.matrix(scale(features))
 
