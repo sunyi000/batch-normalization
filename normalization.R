@@ -78,9 +78,11 @@ no_of_selected_features <- get_elbow_ofDistribution(1:length(pca_eigenvalues),pc
 
 screeplot(pca_ctrl)
 
+
 pca_nctrl <- prcomp(t(nctrl_features),scale.=T, center=T)
 
 #predict(pca_ctrl,newdata = nctrl_features)
+
 
 
 # variance explained, first PC 21.5%, second 8%
