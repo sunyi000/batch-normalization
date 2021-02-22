@@ -57,3 +57,5 @@ get_elbow_ofDistribution <- function(xPoints, yPoints)
   return(maxDistanceToTheSegment)
 }
 
+
+

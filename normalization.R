@@ -40,7 +40,9 @@ features <- removeZeroVar(features)
 features <- features[, which(colMeans(!is.na(features))>0.05)]
 
 ## impute values for NAs
-
+for(i in 1:ncol(features)){
+  features[is.na(features[,i]),i] <-sd(features[,i], na.rm=TRUE)
+}
 
 # Standardise features
 features <-as.matrix(scale(features))
