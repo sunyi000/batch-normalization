@@ -8,20 +8,20 @@ require(graphics)
 
 ###############################################################
 
-# files <- list.files(path="features/dnaDamage/", pattern="*._ch-0.txt", full.names=TRUE, recursive=FALSE)
-# for (ch0_file in files){
-#   if (!exists("dataset")){
-#     dataset <- read.table(ch0_file, header=TRUE, sep="\t", stringsAsFactors=FALSE)
-#   }
-# 
-#   if (exists("dataset")){
-#     temp_dataset <-read.table(ch0_file, header=TRUE, sep="\t", stringsAsFactors=FALSE,strip.white=TRUE)
-#     dataset<-rbind(dataset, temp_dataset)
-#     rm(temp_dataset)
-#   }
-# }
+files <- list.files(path="features/dnaDamage/", pattern="*._ch-0.txt", full.names=TRUE, recursive=FALSE)
+for (ch0_file in files){
+  if (!exists("dataset")){
+    dataset <- read.table(ch0_file, header=TRUE, sep="\t", stringsAsFactors=FALSE)
+  }
 
-dataset = read.table(file='test-data/dnaDamage-test.txt', sep='\t', header = TRUE,strip.white=TRUE,stringsAsFactors=FALSE)
+  if (exists("dataset")){
+    temp_dataset <-read.table(ch0_file, header=TRUE, sep="\t", stringsAsFactors=FALSE,strip.white=TRUE)
+    dataset<-rbind(dataset, temp_dataset)
+    rm(temp_dataset)
+  }
+}
+
+#dataset = read.table(file='test-data/dnaDamage-test.txt', sep='\t', header = TRUE,strip.white=TRUE,stringsAsFactors=FALSE)
 
 
 # split original features matrix into two matrix, metadata and features
@@ -31,7 +31,7 @@ features <- dataset %>% select (-imageID,-Control,-screen,-tp,-ch,-plate)
 
 # function remove zero variance column
 removeZeroVar <-function(features){
-  features[, sapply(features,var) != 1e-5]  
+  features[, sapply(features,var) > 1e-5]  
 }
 
 features <- removeZeroVar(features)
@@ -60,9 +60,10 @@ combat_data <- data.frame(metadata,t(combat_data))
 ctrl <- combat_data[!(combat_data$Control=="0"),]
 nctrl <- combat_data[!(combat_data$Control=="-"),]
 
-ctrl_features <-ctrl %>% select (-imageID,-Control,-screen,-tp,-ch,-plate)
-ctrl_metadata <-ctrl %>% select (imageID,Control,screen,tp,ch,plate)
-nctrl_features <-nctrl %>% select (-imageID,-Control,-screen,-tp,-ch,-plate)
+ctrl_features <-ctrl %>% select(-imageID,-Control,-screen,-tp,-ch,-plate)
+ctrl_metadata <-ctrl %>% select(imageID,Control,screen,tp,ch,plate)
+
+nctrl_features <-nctrl %>% select(-imageID,-Control,-screen,-tp,-ch,-plate)
 
 
 # PCA on controls
@@ -70,11 +71,13 @@ pca_ctrl <- prcomp(t(ctrl_features),scale.=T, center=T)
 pca_eigenvalues <- pca_ctrl$sdev^2
 no_of_selected_features <- get_elbow_ofDistribution(1:length(pca_eigenvalues),pca_eigenvalues)
 
+
+
 screeplot(pca_ctrl)
 
 pca_nctrl <- prcomp(t(nctrl_features),scale.=T, center=T)
 
-predict(pca_ctrl,newdata = nctrl_features)
+#predict(pca_ctrl,newdata = nctrl_features)
 
 
 # variance explained, first PC 21.5%, second 8%
